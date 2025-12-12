@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <article>
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.created_at|date:"F j, Y" }} by {{ post.author }}</p>
+        <div>
+            {{ post.content }}
+        </div>
+        {% if user == post.author %}
+            <a href="{% url 'post_update' post.pk %}">Edit</a>
+            <a href="{% url 'post_delete' post.pk %}">Delete</a>
+        {% endif %}
+    </article>
+    <h2>Comments</h2>
+<div>
+  {% for comment in comments %}
+    <p>{{ comment.author }} said: "{{ comment.content }}" on {{ comment.created_at }}</p>
+    {% if user == comment.author %}
+      <a href="{% url 'comment-edit' pk=comment.pk %}">Edit</a>
+      <a href="{% url 'comment-delete' pk=comment.pk %}">Delete</a>
+    {% endif %}
+  {% endfor %}
+</div>
+   <p>Tags:
+    {% for tag in post.tags.all %}
+        <a href="{% url 'posts-by-tag' tag.slug %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+
+
+{% if user.is_authenticated %}
+  <h3>Add a Comment:</h3>
+  <form method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">Post Comment</button>
+  </form>
+{% else %}
+  <p>You must be logged in to add a comment.</p>
+{% endif %}
+{% endblock %}
