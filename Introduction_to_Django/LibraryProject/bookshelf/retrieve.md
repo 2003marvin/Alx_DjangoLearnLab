@@ -1,7 +1,5 @@
-# RETRIEVE
-
 from bookshelf.models import Book
-Book.objects.all()
 
-# Output:
-# <QuerySet [<Book: 1984 by George Orwell>]>
+# Retrieve the book by title
+book = Book.objects.get(title="1984")
+print(book)  # Output should display book details
