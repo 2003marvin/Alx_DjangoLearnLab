@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+  <article>
+    <h1>{{ post.title }}</h1>
+    <p>By {{ post.author.username }} on {{ post.published_date }}</p>
+    <div>{{ post.content|linebreaks }}</div>
+    {% if user == post.author %}
+      <a href="{% url 'blog:post_update' post.pk %}">Edit</a>
+      <a href="{% url 'blog:post_delete' post.pk %}">Delete</a>
+    {% endif %}
+  </article>
+
+  <section>
+    <h3>Comments</h3>
+    {% for comment in post.comments.all %}
+      <div>
+        <p>{{ comment.author.username }} said:</p>
+        <p>{{ comment.content }}</p>
+        <p>{{ comment.created_at }}</p>
+        {% if user == comment.author %}
+          <a href="{% url 'blog:comment_update' comment.pk %}">Edit</a>
+          <a href="{% url 'blog:comment_delete' comment.pk %}">Delete</a>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p>No comments yet.</p>
+    {% endfor %}
+  </section>
+
+  {% if user.is_authenticated %}
+    <form action="{% url 'blog:comment_create' post.pk %}" method="post">
+      {% csrf_token %}
+      <textarea name="content"></textarea>
+      <button type="submit">Add Comment</button>
+    </form>
+  {% else %}
+    <p><a href="{% url 'login' %}?next={{ request.path }}">Login</a> to comment.</p>
+  {% endif %}
+{% endblock %}

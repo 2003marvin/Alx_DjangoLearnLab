@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Posts{% if tag %} tagged "{{ tag }}"{% endif %}</h1>
+  {% for post in posts %}
+    <article>
+      <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+      <p>By {{ post.author.username }} on {{ post.published_date|date:"Y-m-d H:i" }}</p>
+      <p>{{ post.content|truncatewords:30 }}</p>
+    </article>
+  {% empty %}
+    <p>No posts yet.</p>
+  {% endfor %}
+{% endblock %}
